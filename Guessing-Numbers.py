@@ -5,7 +5,7 @@ print("Guessing the number game!")
 def guessing_game():
   
   num = random.randint(1, 9)
-  guesses = 0
+  guesses = 1
   
   while True:
     
