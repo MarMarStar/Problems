@@ -44,7 +44,6 @@ def guessing_game():
       print("Error. Please input Y or N.")
     
 if __name__ == "__main__":
-  
-  guessing_game()
+    guessing_game()
   
 
