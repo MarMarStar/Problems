@@ -1,8 +1,25 @@
 import random
 
 def guessing_game():
-  
-  num = random.randint(1, 9)
+  while True:
+    user_min = input("Enter your Minimum amount here: ")
+    user_max = input("Enter your Maximum amount here: ")
+    if user_max.lower() == 'e' or user_min.lower() == 'e':
+      print("Exiting program.")
+      exit()
+      
+    try:
+      min = int(min)
+      max = int(max)
+      if max > min:
+        break
+      else:
+        print("Max must be greater than Minimum.")
+        
+    except ValueError:
+      print("Input integers only.")
+
+  num = random.randint(min, max)
   guesses = 0
   
   while True:
@@ -26,10 +43,10 @@ def guessing_game():
         break
         
     except ValueError:
-      print("Please input only numbers.")
+      print("Input integers only.")
 
 def main():
-  print("Guessing the number game!")
+  print("Guessing the number game! To exit, enter 'e'.")
 
   while True:
     guessing_game()
