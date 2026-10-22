@@ -9,9 +9,9 @@ def guessing_game():
       exit()
       
     try:
-      min = int(min)
-      max = int(max)
-      if max > min:
+      user_min = int(user_min)
+      user_max = int(user_max)
+      if user_max > user_min:
         break
       else:
         print("Max must be greater than Minimum.")
