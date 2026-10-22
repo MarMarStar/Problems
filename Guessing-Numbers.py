@@ -3,7 +3,7 @@ import random
 def guessing_game():
   
   num = random.randint(1, 9)
-  guesses = 1
+  guesses = 0
   
   while True:
     
