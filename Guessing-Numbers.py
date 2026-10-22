@@ -1,7 +1,5 @@
 import random
 
-print("Guessing the number game!")
-
 def guessing_game():
   
   num = random.randint(1, 9)
@@ -17,6 +15,8 @@ def guessing_game():
       
     try:
       user_num = int(user_input)
+      guesses += 1
+
       if user_num > num:
         print("Lower! Try again: ")
       elif user_num < num:
@@ -25,25 +25,29 @@ def guessing_game():
         print(f"You guessed it! The number was {num}. The total times you guessed are {guesses}")
         break
         
-      guesses += 1
-      
     except ValueError:
       print("Please input only numbers.")
 
+def main():
+  print("Guessing the number game!")
+
   while True:
-    next_action = input("Would you like to continue? (Y/N): ").upper()
-    
-    if next_action == 'Y':
-      print("Continuing to play.")
-      guessing_game()
-    elif next_action == 'N':
-      print("Exiting Program.")
-      exit()
-    
-    else:
-      print("Error. Please input Y or N.")
-    
-if __name__ == "__main__":
     guessing_game()
+
+    while True:
+      next_action = input("Would you like to continue? (Y/N): ").upper()
+      
+      if next_action == 'Y':
+        print("Continuing to play.")
+        break
+      elif next_action == 'N':
+        print("Exiting Program.")
+        exit()
+      
+      else:
+        print("Error. Please input Y or N.")
+      
+if __name__ == "__main__":
+  main()
   
 
