@@ -1,0 +1,50 @@
+import random
+
+print("Guessing the number game!")
+
+def guessing_game():
+  
+  num = random.randint(1, 9)
+  guesses = 0
+  
+  while True:
+    
+    user_input = input("Enter your number here (type 'e' to quit): ")
+    
+    if user_input.lower() == 'e':
+      print("Exiting Program.")
+      exit()
+      
+    try:
+      user_num = int(user_input)
+      if user_num > num:
+        print("Lower! Try again: ")
+      elif user_num < num:
+        print("Higher! Try again: ")
+      else:
+        print(f"You guessed it! The number was {num}. The total times you guessed are {guesses}")
+        break
+        
+      guesses += 1
+      
+    except ValueError:
+      print("Please input only numbers.")
+
+  while True:
+    next_action = input("Would you like to continue? (Y/N): ").upper()
+    
+    if next_action == 'Y':
+      print("Continuing to play.")
+      guessing_game()
+    elif next_action == 'N':
+      print("Exiting Program.")
+      exit()
+    
+    else:
+      print("Error. Please input Y or N.")
+    
+if __name__ == "__main__":
+  
+  guessing_game()
+  
+
