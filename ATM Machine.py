@@ -3,7 +3,8 @@ def show_menu():
  1 to check for balance.
  2 for deposit.
  3 for withdrawal.
- 4 to exit. """)
+ 4 to change pin
+ 5 to exit. """)
 
 def show_balance(balance):
   print(f"This is your balance {balance}.\n")
@@ -91,17 +92,74 @@ def verify_pin(correct_pin):
   print("Too many incorrect attempts. Your card has been blocked for security.")
   return False
 
+def change_pin(correct_pin):
+  user_choice = input("Do you want to change your PIN? (yes/no): ").strip().lower()
+  if user_choice == "yes":
+    while True:
+      confirmation = input("Please enter your current PIN to confirm: ").strip()
+      if not confirmation.isdigit() or len(confirmation) != 4:
+        print("Invalid PIN format. Please enter a 4-digit numeric PIN.")
+        continue
+      if confirmation != correct_pin:
+        print("Incorrect current PIN. PIN change cancelled.")
+        return correct_pin
+      while True:
+        new_pin = input("Enter your new 4-digit PIN: ").strip()
+        if len(new_pin) != 4 or not new_pin.isdigit():
+          print("Invalid PIN format. Please enter a 4-digit numeric PIN.")
+          continue
+        confirm_pin = input("Confirm your new PIN: ").strip()
+        if new_pin != confirm_pin:
+          print("PINs do not match. Please try again.")
+          continue
+        print("PIN changed successfully!")
+        return new_pin
+    return correct_pin
+
+  if user_choice == "no":
+    print("PIN change cancelled.")
+    return correct_pin
+
+def account_number():
+  while True:
+    acc_num = input("Please enter your 5-digit account number: ").strip()
+    if len(acc_num) != 5 or not acc_num.isdigit():
+      print("Invalid account number. Please enter a 5-digit numeric account number.")
+      continue
+    return acc_num
+
 def run_atm():
-  balance = 5000
+  accounts = {
+    "12345": {"pin": "1234", "balance": 1000},
+    "67890": {"pin": "5678", "balance": 500},
+    "11345": {"pin": "4321", "balance": 1500},
+    "54321": {"pin": "8765", "balance": 2000},
+    "98765": {"pin": "9439", "balance": 30000},
+    "00001": {"pin": "9203", "balance": 10000000}
+  }
+  
   total_deposit = 0
   total_withdrawal = 0
-  correct_pin = "1123"
-
-  if not verify_pin(correct_pin):
+  
+  if not accounts:
+    print("No accounts available. Exiting program.")
     return
   
   while True:
-  
+    acc_num = account_number()
+    
+    if acc_num in accounts:
+      correct_pin = accounts[acc_num]["pin"]
+      balance = accounts[acc_num]["balance"]
+    verified = verify_pin(correct_pin)
+    
+    if verified:
+      break
+    else:
+      print("Please try again or type 'cancel' to exit.")
+      continue
+    
+  while True:
     show_menu()
     user_choice = input("Choose: ").strip().lower()
     
@@ -118,6 +176,9 @@ def run_atm():
       balance = new_balance
 
     elif user_choice == "4":
+      correct_pin = change_pin(correct_pin)
+    
+    elif user_choice == "5":
       user_exit()
       print_receipt(balance, total_deposit, total_withdrawal)
       return
