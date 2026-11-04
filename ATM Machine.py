@@ -12,20 +12,22 @@ def show_balance(balance):
 def user_deposit(balance):
   print("Please note that the minimum deposit amount is 100 pesos and must be in denominations of 100 pesos. If you wish to cancel the transaction, type 'cancel'.")
   while True:
-    deposit = input("Deposit:").strip().lower()
-    if deposit == "cancel":
+    deposit = input("Deposit: ")
+    
+    if deposit.strip().lower() == "cancel":
       print("Transaction cancelled.")
       return balance
     
-    if not deposit.isdigit():
+    try:
+      deposit = int(deposit)
+    except ValueError:
       print("Invalid input. Please enter a numeric value.")
       continue
-    deposit = int(deposit)
 
     if deposit < 100 or deposit % 100 != 0:
       print("Deposit must be at least 100 pesos AND in a valid denomination of 100.")
       continue
-
+    
     balance += deposit
     print(f"Successfully deposited {deposit}. New balance is {balance}")
     return balance
@@ -33,18 +35,18 @@ def user_deposit(balance):
 def withdraw(balance):
   print("Please note that the minimum withdrawal amount is 100 pesos and must be in denominations of 100 pesos. If you wish to cancel the transaction, type 'cancel'.")
   while True:
-    withdrawal = input("Withdraw:").strip().lower()
-
-    if withdrawal == "cancel":
+    withdrawal = input("Withdrawal: ")
+    
+    if withdrawal.strip().lower() == "cancel":
       print("Transaction cancelled.")
       return balance
     
-    if not withdrawal.isdigit():
+    try:
+      withdrawal = int(withdrawal)
+    except ValueError:
       print("Invalid input. Please enter a numeric value.")
       continue
-
-    withdrawal = int(withdrawal)
-
+    
     if withdrawal < 100  or withdrawal % 100 != 0: 
       print("Withdrawal must be at least 100 pesos AND in a valid denomination of 100.")
       continue
@@ -78,7 +80,7 @@ def verify_pin(correct_pin):
       print("PIN cannot be empty. Please try again.")
       continue
 
-    if len(user_pin) != 4 or not user_pin.isdigit():
+    if len(user_pin) != 4 or not user_pin.isdecimal():
       print("Invalid PIN format. Please enter a 4-digit numeric PIN.")
       continue
 
@@ -93,49 +95,87 @@ def verify_pin(correct_pin):
   return False
 
 def change_pin(correct_pin):
-  user_choice = input("Do you want to change your PIN? (yes/no): ").strip().lower()
-  if user_choice == "yes":
-    while True:
-      confirmation = input("Please enter your current PIN to confirm: ").strip()
-      if not confirmation.isdigit() or len(confirmation) != 4:
-        print("Invalid PIN format. Please enter a 4-digit numeric PIN.")
-        continue
-      if confirmation != correct_pin:
-        print("Incorrect current PIN. PIN change cancelled.")
-        return correct_pin
-      while True:
-        new_pin = input("Enter your new 4-digit PIN: ").strip()
-        if len(new_pin) != 4 or not new_pin.isdigit():
-          print("Invalid PIN format. Please enter a 4-digit numeric PIN.")
-          continue
-        confirm_pin = input("Confirm your new PIN: ").strip()
-        if new_pin != confirm_pin:
-          print("PINs do not match. Please try again.")
-          continue
-        print("PIN changed successfully!")
-        return new_pin
-    return correct_pin
+  while True:
+    user_choice = input("Do you want to change your PIN? (yes/no): ").strip().lower()
+    if user_choice == "yes":
+      break
+    
+    elif user_choice == "no":
+      print("PIN change cancelled.")
+      return correct_pin
+    
+    else:
+      print("Invalid input. Please type 'yes' or 'no'.")
+      
+  while True:
+    confirmation = input("Please enter your current PIN to confirm (type 'cancel' to quit): ").strip()
+    
+    if confirmation == "cancel":
+      print("PIN change cancelled.")
+      return correct_pin
+    
+    if confirmation != correct_pin:
+      print("Incorrect current PIN. PIN change cancelled.")
+      return correct_pin
 
-  if user_choice == "no":
-    print("PIN change cancelled.")
-    return correct_pin
+    break
+  
+  while True:
+    
+    new_pin = input("Enter your new 4-digit PIN: ").strip()
+    
+    if len(new_pin) != 4 or not new_pin.isdecimal():
+      print("Invalid PIN format. Please enter a 4-digit numeric PIN.")
+      continue
+    confirm_pin = input("Confirm your new PIN: ").strip()
+    
+    if new_pin != confirm_pin:
+      print("PINs do not match. Please try again.")
+      continue
+    print("PIN changed successfully!")
+    return new_pin
 
 def account_number():
   while True:
     acc_num = input("Please enter your 5-digit account number: ").strip()
-    if len(acc_num) != 5 or not acc_num.isdigit():
+    if len(acc_num) != 5 or not acc_num.isdecimal():
       print("Invalid account number. Please enter a 5-digit numeric account number.")
       continue
     return acc_num
 
+def show_all_accounts(accounts):
+  print("Admin mode activated. Printing all account details:")
+  for acc, details in accounts.items():
+    print(
+      f"Account Number: {acc}, "
+      f"Name: {details['name']}, "
+      f"PIN: {details['pin']}, "
+      f"Balance: {details['balance']}"
+    )
+
 def run_atm():
   accounts = {
-    "12345": {"pin": "1234", "balance": 1000},
-    "67890": {"pin": "5678", "balance": 500},
-    "11345": {"pin": "4321", "balance": 1500},
-    "54321": {"pin": "8765", "balance": 2000},
-    "98765": {"pin": "9439", "balance": 30000},
-    "00001": {"pin": "9203", "balance": 10000000}
+    "12345": {"name": "John Doe", 
+              "pin": "1234",
+              "balance": 1000},
+    "67890": {"name": "Jane Smith", 
+              "pin": "5678",
+              "balance": 500},
+    "11345": {"name": "Bob Johnson", 
+              "pin": "4321",
+              "balance": 1500},
+    "54321": {"name": "Alice Brown", 
+              "pin": "8765",
+              "balance": 2000},
+    "98765": {"name": "Charlie Wilson", 
+              "pin": "9439", 
+              "balance": 30000},
+    "00001": {"name": "Terry Davis", 
+              "pin": "9203", 
+              "balance": 10000000},
+    "11234": {"name": "Eve Wilson",
+              "pin": "1123", 
+              "balance": 100000000},
   }
   
   total_deposit = 0
@@ -148,47 +188,65 @@ def run_atm():
   while True:
     acc_num = account_number()
     
-    if acc_num in accounts:
-      correct_pin = accounts[acc_num]["pin"]
-      balance = accounts[acc_num]["balance"]
-    verified = verify_pin(correct_pin)
-    
-    if verified:
-      break
-    else:
-      print("Please try again or type 'cancel' to exit.")
+    if acc_num not in accounts:
+      print("Account number not found. Please try again.")
       continue
     
+    correct_pin = accounts[acc_num]["pin"]
+    balance = accounts[acc_num]["balance"]
+    
+    if not verify_pin(correct_pin):
+      return
+    
+    print(f"Welcome, {accounts[acc_num]['name']}!\n")
+    break
+  
   while True:
     show_menu()
     user_choice = input("Choose: ").strip().lower()
     
     if user_choice == "1":
       show_balance(balance)
+      
     elif user_choice == "2":
       new_balance = user_deposit(balance)
+      
       total_deposit += new_balance - balance
       balance = new_balance
-
+      
+      accounts[acc_num]["balance"] = balance  
+      
     elif user_choice == "3":
       new_balance = withdraw(balance)
+      
       total_withdrawal += balance - new_balance
       balance = new_balance
+      
+      accounts[acc_num]["balance"] = balance
 
     elif user_choice == "4":
       correct_pin = change_pin(correct_pin)
-    
+      accounts[acc_num]["pin"] = correct_pin
+      
     elif user_choice == "5":
       user_exit()
       print_receipt(balance, total_deposit, total_withdrawal)
       return
+    
+    elif user_choice == "9901":
+      show_all_accounts(accounts)
     
     else: 
       print("Invalid option. Try again.")
       continue
     
     while True:
-      next_action = input("Please input 1 for another transaction\nor\n2 to exit the program and print receipt:  ").strip()
+      
+      next_action = input("""
+  Please input 1 for another transaction 
+                    or 
+  2 to exit the program and print receipt:  """).strip()
+      
       if next_action == "2":
         user_exit()
         print_receipt(balance, total_deposit, total_withdrawal)
